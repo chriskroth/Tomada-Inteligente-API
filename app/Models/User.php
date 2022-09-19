@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -38,7 +39,22 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
-    /*protected $casts = [
+    protected $casts = [
         'email_verified_at' => 'datetime',
-    ];*/
+    ];
+
+    public function plugs(): BelongsToMany
+    {
+        return $this->belongsToMany(Plug::class)
+            ->whereNull('deletet_at')
+            ->withTimestamps()
+            ->withPivot(['deletet_at']);
+    }
+
+    public function plugsWithTrashed(): BelongsToMany
+    {
+        return $this->belongsToMany(Plug::class)
+            ->withTimestamps()
+            ->withPivot(['deletet_at']);
+    }
 }

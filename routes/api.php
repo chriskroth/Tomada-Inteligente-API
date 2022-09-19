@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PlugController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,10 @@ use Illuminate\Support\Facades\Route;
     Route::middleware('auth:sanctum')->group(function() {
         Route::controller(UserController::class)->group(function () {
             Route::get("/user", "show");
+        });
+
+        Route::controller(PlugController::class)->group(function () {
+            Route::post("/plug", "store");
         });
     });
 }
