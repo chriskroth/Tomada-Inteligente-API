@@ -15,10 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::controller(UserController::class)->group(function () {
-    Route::post("/user", "store");
-});
+//- Rotas sem necessidade de autenticação
+{
+    Route::controller(UserController::class)->group(function () {
+        Route::post("/user", "store");
+        Route::post("/login", "login");
+    });
+}
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//- Rotas que necessitam de autenticação
+{
+    Route::middleware('auth:sanctum')->group(function() {
+        Route::controller(UserController::class)->group(function () {
+            Route::get("/user", "show");
+        });
+    });
+}
