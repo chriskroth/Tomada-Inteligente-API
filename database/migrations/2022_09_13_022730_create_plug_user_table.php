@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('plugs_users', function (Blueprint $table) {
+        Schema::create('plug_user', function (Blueprint $table) {
             $table->unsignedBigInteger("plug_id");
             $table->unsignedBigInteger("user_id");
             $table->timestamps();
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('plugs_users');
+        Schema::dropIfExists('plug_user');
     }
 };
