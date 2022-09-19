@@ -13,16 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users_has_plugs', function (Blueprint $table) {
-//            $table->id();
-            $table->unsignedBigInteger("user_id");
+        Schema::create('plugs_users', function (Blueprint $table) {
             $table->unsignedBigInteger("plug_id");
+            $table->unsignedBigInteger("user_id");
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary(['user_id', 'plug_id']);
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->primary(['plug_id', 'user_id']);
             $table->foreign('plug_id')->references('id')->on('plugs');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users_has_plugs');
+        Schema::dropIfExists('plugs_users');
     }
 };
