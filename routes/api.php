@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\PlugController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +21,10 @@ use Illuminate\Support\Facades\Route;
         Route::post("/user", "store");
         Route::post("/login", "login");
     });
+
+    Route::controller(PlugController::class)->group(function () {
+        Route::post("/plug", "store");
+    });
 }
 
 //- Rotas que necessitam de autenticação
@@ -32,7 +35,7 @@ use Illuminate\Support\Facades\Route;
         });
 
         Route::controller(PlugController::class)->group(function () {
-            Route::post("/plug", "store");
+            Route::post("/register-plug", "storeAndAttachToLoggedUser");
         });
     });
 }

@@ -13,6 +13,17 @@ class PlugController extends Controller
 {
     public function store(PlugStoreRequest $request)
     {
+        /* @var Plug $plug */
+        $plug = Plug::create($request->all());
+        if (is_null($plug)) {
+            return response(['message' => "Erro ao registrar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        return response(["plug" => $plug], Response::HTTP_CREATED);
+    }
+
+    public function storeAndAttachToLoggedUser(PlugStoreRequest $request)
+    {
         /* @var User $user */
         $user = Auth::user();
         if (is_null($user)) {
