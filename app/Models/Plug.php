@@ -17,15 +17,15 @@ class Plug extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
-            ->whereNull('deletet_at')
+            ->whereNull('deleted_at')
             ->withTimestamps()
-            ->withPivot(['deletet_at']);
+            ->withPivot(['deleted_at']);
     }
 
     public function usersWithTrashed(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
             ->withTimestamps()
-            ->withPivot(['deletet_at']);
+            ->withPivot(['deleted_at']);
     }
 }
