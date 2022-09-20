@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
+use App\Models\Plug;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -47,5 +48,17 @@ class UserController extends Controller
             return response($user, Response::HTTP_OK);
 
         return response(['message' => "Não foi possível identificar o usuário logado"], Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function attachPlugToLoggedUser(Plug $plug)
+    {
+        /* @var User $user */
+        $user = Auth::user();
+        if ($user->plugs->contains($plug->id)) {
+            return response([], Response::HTTP_CREATED);
+        }
+
+        $user->plugs()->attach($plug->id);
+        return response([], Response::HTTP_CREATED);
     }
 }

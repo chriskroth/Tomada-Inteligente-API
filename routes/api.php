@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
     Route::middleware('auth:sanctum')->group(function() {
         Route::controller(UserController::class)->group(function () {
             Route::get("/user", "show");
+            Route::post("/user/attach-plug/{plug}", "attachPlugToLoggedUser");
         });
 
         Route::controller(PlugController::class)->group(function () {
