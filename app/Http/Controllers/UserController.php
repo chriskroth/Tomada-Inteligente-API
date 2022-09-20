@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -60,5 +61,24 @@ class UserController extends Controller
 
         $user->plugs()->attach($plug->id);
         return response([], Response::HTTP_CREATED);
+    }
+
+    public function detachPlugFromLoggedUser(Plug $plug)
+    {
+        /* @var User $user */
+        $user = Auth::user();
+        if (!$user->plugs->contains($plug->id)) {
+            return response([], Response::HTTP_OK);
+        }
+
+        DB::table('plug_user')
+            ->where('plug_id', $plug->id)
+            ->where('user_id', $user->id)
+            ->whereNull('deleted_at')
+            ->update([
+                'deleted_at' => DB::raw("NOW()")
+            ]);
+
+        return response([], Response::HTTP_OK);
     }
 }
