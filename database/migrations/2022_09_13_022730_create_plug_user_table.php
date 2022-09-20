@@ -14,12 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('plug_user', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger("plug_id");
             $table->unsignedBigInteger("user_id");
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary(['plug_id', 'user_id']);
             $table->foreign('plug_id')->references('id')->on('plugs');
             $table->foreign('user_id')->references('id')->on('users');
         });
