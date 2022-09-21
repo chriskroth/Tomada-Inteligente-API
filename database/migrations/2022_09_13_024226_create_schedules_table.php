@@ -14,17 +14,16 @@ return new class extends Migration {
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("user_id");
-            $table->unsignedBigInteger("plug_id");
+            $table->unsignedBigInteger("plug_user_id");
             $table->unsignedInteger("time")->comment("Tempo, em segundos, que ficará ligado");
             $table->boolean("emit_sound")->default(false);
             $table->dateTime("start_date")->nullable(true);
             $table->dateTime("end_date")->nullable(true);
             $table->float("consumption")->nullable(true)->comment("Consumo de energia");
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('plug_id')->references('id')->on('plugs');
+            $table->foreign('plug_user_id')->references('id')->on('plug_user');
         });
     }
 
