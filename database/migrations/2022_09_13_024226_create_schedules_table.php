@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->boolean("emit_sound")->default(false);
             $table->dateTime("start_date")->nullable(true);
             $table->dateTime("end_date")->nullable(true);
+            $table->integer("voltage")->default(100)->comment("Tensão que deve ser utilizada. 0% a 100%");
             $table->float("consumption")->nullable(true)->comment("Consumo de energia");
             $table->timestamps();
             $table->softDeletes();
