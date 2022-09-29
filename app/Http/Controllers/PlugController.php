@@ -71,4 +71,22 @@ class PlugController extends Controller
 
         return response(["schedule" => $schedule], Response::HTTP_CREATED);
     }
+
+    public function listSchedules(Plug $plug)
+    {
+        $schedules = Plug::query()
+            ->join("plug_user", "plugs.id", "=", "plug_user.plug_id")
+            ->join("schedules", "schedules.plug_user_id", "=", "plug_user.id")
+            ->where("plugs.id", $plug->id)
+            ->whereNull("plug_user.deleted_at")
+            ->whereNull("schedules.deleted_at")
+//            ->whereDate("schedules.start_date", ">", now())
+            ->select(["schedules.id", "schedules.time", "schedules.emit_sound", "schedules.start_date", "schedules.voltage"])
+            ->get();
+        if (is_null($schedules) || count($schedules) === 0) {
+            return response([], Response::HTTP_NO_CONTENT);
+        }
+
+        return response($schedules, Response::HTTP_OK);
+    }
 }

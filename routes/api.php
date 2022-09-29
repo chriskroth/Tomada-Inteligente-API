@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\Route;
         Route::controller(PlugController::class)->group(function () {
             Route::post("/register-plug", "storeAndAttachToLoggedUser");
             Route::post("/{plug}/schedule", "newSchedule");
+            Route::get("/{plug}/schedules", "listSchedules");
         });
     });
 }
