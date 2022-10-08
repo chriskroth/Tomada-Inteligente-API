@@ -15,6 +15,7 @@ return new class extends Migration {
         Schema::create('plugs', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80)->nullable(true);
+            $table->string('token', 100);
             $table->timestamps();
         });
     }

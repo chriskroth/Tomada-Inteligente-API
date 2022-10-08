@@ -11,7 +11,8 @@ class Plug extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        'token',
     ];
 
     public function users(): BelongsToMany

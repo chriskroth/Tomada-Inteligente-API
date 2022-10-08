@@ -11,13 +11,17 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PlugController extends Controller
 {
     public function store(PlugStoreRequest $request)
     {
+        $token = Str::random(100);
+        $data = array_merge($request->all(), ['token' => $token]);
+
         /* @var Plug $plug */
-        $plug = Plug::create($request->all());
+        $plug = Plug::create($data);
         if (is_null($plug)) {
             return response(['message' => "Erro ao registrar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
         }
@@ -33,8 +37,10 @@ class PlugController extends Controller
             return response(['message' => 'Erro ao identificar o usuário logado'], Response::HTTP_UNAUTHORIZED);
         }
 
+        $token = Str::random(100);
+        $plugData = array_merge($request->all(), ['token' => $token]);
         /* @var Plug $plug */
-        $plug = Plug::create($request->all());
+        $plug = Plug::create($plugData);
         if (is_null($plug)) {
             return response(['message' => "Erro ao registrar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
         }
