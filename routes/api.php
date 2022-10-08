@@ -22,8 +22,17 @@ use Illuminate\Support\Facades\Route;
         Route::post("/login", "login");
     });
 
-    Route::controller(PlugController::class)->group(function () {
-        Route::post("/plug", "store");
+    Route::controller(PlugController::class)
+        ->prefix("/plug")
+        ->group(function () {
+            Route::post("/", "store");
+
+            Route::prefix("/{plug}/{token}")
+                ->middleware("auth.plug")
+                ->group(function () {
+                    Route::get("/next-schedule", "getNextSchedule");
+                    Route::post("/start-schedule", "startSchedule");
+            });
     });
 }
 

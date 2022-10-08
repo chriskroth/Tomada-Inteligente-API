@@ -29,4 +29,9 @@ class Plug extends Model
             ->withTimestamps()
             ->withPivot(['deleted_at']);
     }
+
+    public function isMyToken(string $token)
+    {
+        return $this->token === $token;
+    }
 }

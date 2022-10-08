@@ -86,7 +86,6 @@ class PlugController extends Controller
             ->where("plugs.id", $plug->id)
             ->whereNull("plug_user.deleted_at")
             ->whereNull("schedules.deleted_at")
-//            ->whereDate("schedules.start_date", ">", now())
             ->select(["schedules.id", "schedules.time", "schedules.emit_sound", "schedules.start_date", "schedules.voltage"])
             ->get();
         if (is_null($schedules) || count($schedules) === 0) {
@@ -94,5 +93,44 @@ class PlugController extends Controller
         }
 
         return response($schedules, Response::HTTP_OK);
+    }
+
+    public function getNextSchedule(Plug $plug)
+    {
+        $schedule = Schedule::query()
+            ->join("plug_user", "plug_user.id", "=", "schedules.plug_user_id")
+            ->where("plug_user.plug_id", $plug->id)
+            ->where("schedules.started", false)
+            ->where("schedules.start_date", ">", DB::raw("DATE_SUB(NOW(), INTERVAL " . env("SCHEDULE_SEGUNDOS_TOLERANCIA") . " SECOND)"))
+            ->orderBy("start_date")
+            ->select("schedules.*")
+            ->first();
+        if (!$schedule) {
+            return response([], Response::HTTP_NO_CONTENT);
+        }
+
+        return response(['schedule' => $schedule], Response::HTTP_OK);
+    }
+
+    public function startSchedule(Plug $plug, Request $request)
+    {
+        $scheduleId = $request->input('schedule');
+        if (intval($scheduleId) <= 0) {
+            return response(['message' => "Erro ao identificar o agendamento que deve ser iniciado"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        /* @var Schedule $schedule */
+        $schedule = Schedule::find(intval($scheduleId));
+        if (!$schedule) {
+            return response(['message' => "Agendamento não encontrado"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        $schedulePlug = $schedule->plug();
+        if ($schedulePlug->id !== $plug->id) {
+            return response(['message' => "Agendamento e tomada não estão vinculados"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        $schedule->start();
+        return response([], Response::HTTP_OK);
     }
 }
