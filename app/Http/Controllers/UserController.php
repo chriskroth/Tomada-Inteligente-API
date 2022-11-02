@@ -81,4 +81,11 @@ class UserController extends Controller
 
         return response([], Response::HTTP_OK);
     }
+
+    public function listPlugs()
+    {
+        /* @var User $user */
+        $user = Auth::user();
+        return response($user->plugs, Response::HTTP_OK);
+    }
 }
