@@ -105,7 +105,8 @@ class UserController extends Controller
             ->whereNull("schedules.deleted_at")
             ->select(
                 DB::raw(
-                    "schedules.id, schedules.time, schedules.emit_sound, schedules.start_date, schedules.end_date, schedules.voltage, " .
+                    "schedules.id, schedules.time, schedules.emit_sound, schedules.start_date, schedules.end_date, " .
+                    "schedules.voltage, schedules.started, " .
                     "plugs.name AS plugName, " .
                     "users.id AS userId, users.name AS userName"
                 )
@@ -117,5 +118,24 @@ class UserController extends Controller
         }
 
         return response($schedules, Response::HTTP_OK);
+    }
+
+    function removeSchedule(Schedule $schedule) {
+        /* @var User $user */
+        $user = Auth::user();
+        $userSchedule = $schedule->user();
+
+        if ($user->id != $userSchedule->id) {
+            return response(['message' => "Você não possui permissão para remover este agendamento"], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($schedule->started == 1) {
+            return response(['message' => "A função de remover agendamentos em andamento ainda não está disponível"], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($schedule->delete())
+            return response([], Response::HTTP_OK);
+
+        return response(['message' => "Erro ao remover o agendamento selecionado"], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
