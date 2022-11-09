@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\Plug;
 use App\Models\Schedule;
 use App\Models\User;
@@ -50,6 +51,26 @@ class UserController extends Controller
             return response($user, Response::HTTP_OK);
 
         return response(['message' => "Não foi possível identificar o usuário logado"], Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function update(UserUpdateRequest $request)
+    {
+        /* @var User $user */
+        $user = Auth::user();
+        if (is_null($user) || !isset($user->id) || intval($user->id) <= 0) {
+            return response(['message' => "Não foi possível identificar o usuário logado"], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user->name = $request->name;
+        if (!empty($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+
+        if ($user->save()) {
+            return response($user, Response::HTTP_OK);
+        }
+
+        return response(['message' => "Erro ao salvar os dados enviados"], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function attachPlugToLoggedUser(Plug $plug)

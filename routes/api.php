@@ -46,6 +46,7 @@ use Illuminate\Support\Facades\Route;
             Route::post("/user/attach-plug/{plug}", "attachPlugToLoggedUser");
             Route::delete("/user/detach-plug/{plug}", "detachPlugFromLoggedUser");
             Route::delete("/schedule/remove/{schedule}", "removeSchedule");
+            Route::patch("user", "update");
         });
 
         Route::controller(PlugController::class)->group(function () {
