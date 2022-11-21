@@ -25,6 +25,94 @@ class PlugController extends Controller
         return response(["plug" => $plug], Response::HTTP_CREATED);
     }
 
+    public function update(PlugStoreRequest $request)
+    {
+        // /* @var Plug $plug */
+        $plug = Plug::where('serial_number', $request->serial_number
+                           )->update(['name' => $request->name,
+                                      'power' => $request->power,
+                                      'consumption' => $request->consumption
+                                    ]);
+
+        if (is_null($plug)) {
+            return response(['message' => "Erro ao atualizar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        $updated_plug = Plug::where('serial_number', $request->serial_number)->get();
+
+        return response($updated_plug);
+    }
+    
+    public function findBySerialNumber(PlugStoreRequest $request)
+    {
+        // /* @var Plug $plug */
+        $plug = Plug::where('serial_number', $request->serial_number)->get();
+        
+        if (is_null($plug)) {
+            return response(['message' => "Erro ao buscar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+        }
+
+         return response($plug);
+    }
+
+    public function getPowerBySerialNumber($serial_number)
+    {
+        // /* @var Plug $plug */
+        $plug = Plug::where('serial_number', $serial_number)->get();
+        
+        if (is_null($plug)) {
+            return response(['message' => "Erro ao buscar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        //$power = json_decode($plug);
+
+        $power = json_decode($plug);
+
+        return response($power[0]->power);
+    }
+
+    public function setConsumptionBySerialNumber(PlugStoreRequest $request)
+    {
+        // /* @var Plug $plug */
+        $plug = Plug::where('serial_number', $request->serial_number
+                           )->update(['consumption' => $request->consumption]);
+
+        if (is_null($plug)) {
+            return response(['message' => "Erro ao atualizar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        $updated_plug = Plug::where('serial_number', $request->serial_number)->get();
+
+        return response($updated_plug);
+    }
+
+    public function getConsumptionBySerialNumber(PlugStoreRequest $request)
+    {
+        // /* @var Plug $plug */
+        $plug = Plug::where('serial_number', $request->serial_number)->get();
+        
+        if (is_null($plug)) {
+            return response(['message' => "Erro ao atualizar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        $consumption = json_decode($plug);
+
+        return response($consumption[0]->consumption);
+    }
+
+    // public function findBySerialNumber($serial_number)
+    // {
+    //     // /* @var Plug $plug */
+
+    //     $plug = Plug::where('serial_number', $serial_number)->get();
+        
+    //     if (is_null($plug)) {
+    //         return response(['message' => "Erro ao buscar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+    //     }
+
+    //      return response($plug);
+    // }
+
     public function storeAndAttachToLoggedUser(PlugStoreRequest $request)
     {
         /* @var User $user */

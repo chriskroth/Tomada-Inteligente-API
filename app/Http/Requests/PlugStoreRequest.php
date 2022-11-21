@@ -25,7 +25,11 @@ class PlugStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "filled|max:80"
+            "id" => "filled|max:80",
+            "serial_number" => "filled|max:80",
+            "name" => "filled|max:80",
+            "power" => "filled|max:80",
+            "consumption" => "filled|max:80",
         ];
     }
 }
