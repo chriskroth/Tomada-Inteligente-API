@@ -32,10 +32,17 @@ use Illuminate\Support\Facades\Route;
         Route::post("/login", "login");
     });
 
-    Route::controller(PlugController::class)->group(function () {
-        Route::post("/plug", "store");
-        Route::put("/plug", "update");
-        Route::get("/plug/{serial_number}", "findBySerialNumber");
+    Route::controller(PlugController::class)
+        ->prefix("/plug")
+        ->group(function () {
+            Route::post("/", "store");
+
+            Route::prefix("/{plug}/{token}")
+                ->middleware("auth.plug")
+                ->group(function () {
+                    Route::get("/next-schedule", "getNextSchedule");
+                    Route::post("/start-schedule", "startSchedule");
+            });
     });
 }
 
@@ -44,8 +51,12 @@ use Illuminate\Support\Facades\Route;
     Route::middleware('auth:sanctum')->group(function() {
         Route::controller(UserController::class)->group(function () {
             Route::get("/user", "show");
+            Route::get("/user/plugs", "listPlugs");
+            Route::get("/user/schedules", "listSchedules");
             Route::post("/user/attach-plug/{plug}", "attachPlugToLoggedUser");
             Route::delete("/user/detach-plug/{plug}", "detachPlugFromLoggedUser");
+            Route::delete("/schedule/remove/{schedule}", "removeSchedule");
+            Route::patch("user", "update");
         });
 
         Route::controller(PlugController::class)->group(function () {

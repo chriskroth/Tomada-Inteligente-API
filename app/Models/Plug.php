@@ -16,6 +16,7 @@ class Plug extends Model
         'name',
         'power',
         'consumption',
+        'token',
     ];
 
     public function users(): BelongsToMany
@@ -31,5 +32,10 @@ class Plug extends Model
         return $this->belongsToMany(User::class)
             ->withTimestamps()
             ->withPivot(['deleted_at']);
+    }
+
+    public function isMyToken(string $token)
+    {
+        return $this->token === $token;
     }
 }

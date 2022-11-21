@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->dateTime("end_date")->nullable(true);
             $table->integer("voltage")->default(100)->comment("Tensão que deve ser utilizada. 0% a 100%");
             $table->float("consumption")->nullable(true)->comment("Consumo de energia");
+            $table->boolean("started")->default(false);
             $table->timestamps();
             $table->softDeletes();
 

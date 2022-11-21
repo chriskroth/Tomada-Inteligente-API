@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('name', 80)->nullable(true);
             $table->integer('power')->default(100)->comment("Potência que deve ser liberada. 0% a 100%");
             $table->float('consumption')->nullable(true)->comment("Consumo de energia.");
+            $table->string('token', 100);
             $table->timestamps();
         });
     }
