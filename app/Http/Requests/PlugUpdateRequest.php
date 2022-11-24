@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PlugStoreRequest extends FormRequest
+class PlugUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class PlugStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            "serial_number" => "required|max:80|unique:plugs,serial_number",
-            "pin" => "required|max:6",
+            "power" => "filled|numeric|min:0|max:100",
+            "consumption" => "filled|numeric|min:0|max:20",
         ];
     }
 }
