@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Route;
 //- Rotas sem necessidade de autenticação
 {
     Route::controller(PlugController::class)->group(function () {
-        //Route::get("/plug/{serial_number}", "findBySerialNumber");
         Route::post("/plug/serial_number", "findBySerialNumber");
         Route::post("/plug/{serial_number}/power", "getPowerBySerialNumber");
         Route::put("/plug/{serial_number}/consumption", "setConsumptionBySerialNumber");
@@ -60,7 +59,6 @@ use Illuminate\Support\Facades\Route;
         });
 
         Route::controller(PlugController::class)->group(function () {
-            Route::post("/register-plug", "storeAndAttachToLoggedUser");
             Route::post("/{plug}/schedule", "newSchedule");
             Route::get("/{plug}/schedules", "listSchedules");
         });
