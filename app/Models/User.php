@@ -48,13 +48,13 @@ class User extends Authenticatable
         return $this->belongsToMany(Plug::class)
             ->whereNull('deleted_at')
             ->withTimestamps()
-            ->withPivot(['deleted_at']);
+            ->withPivot(['deleted_at', 'name']);
     }
 
     public function plugsWithTrashed(): BelongsToMany
     {
         return $this->belongsToMany(Plug::class)
             ->withTimestamps()
-            ->withPivot(['deleted_at']);
+            ->withPivot(['deleted_at', 'name']);
     }
 }
