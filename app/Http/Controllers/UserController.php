@@ -121,14 +121,14 @@ class UserController extends Controller
             ->join("plugs", "plugs.id", "=", "plug_user.plug_id")
             ->join("users", "users.id", "=", "plug_user.user_id")
             ->where("plug_user.user_id", $user->id)
-            ->whereDate("schedules.end_date", ">", now())
+            ->where("schedules.end_date", ">", now())
             ->whereNull("plug_user.deleted_at")
             ->whereNull("schedules.deleted_at")
             ->select(
                 DB::raw(
                     "schedules.id, schedules.time, schedules.emit_sound, schedules.start_date, schedules.end_date, " .
                     "schedules.voltage, schedules.started, " .
-                    "plugs.name AS plugName, " .
+                    "plug_user.name AS plugName, " .
                     "users.id AS userId, users.name AS userName"
                 )
             )
