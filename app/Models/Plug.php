@@ -13,7 +13,7 @@ class Plug extends Model
     protected $fillable = [
         'id',
         'serial_number',
-        'name',
+        'pin',
         'power',
         'consumption',
         'token',
