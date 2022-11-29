@@ -73,15 +73,24 @@ class UserController extends Controller
         return response(['message' => "Erro ao salvar os dados enviados"], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    public function attachPlugToLoggedUser(Plug $plug)
+    public function attachPlugToLoggedUser(Request $request, string $serial_number)
     {
         /* @var User $user */
         $user = Auth::user();
-        if ($user->plugs->contains($plug->id)) {
-            return response([], Response::HTTP_CREATED);
+
+        $plug = Plug::query()->where('serial_number', '=', $serial_number)->first();
+        if (is_null($plug)) {
+            return response(['message' => "Tomada não encontrada. Verifique o número serial."], Response::HTTP_NOT_FOUND);
+        } elseif ($plug->pin != $request->pin) {
+            return response(['message' => "Tomada não encontrada no sistema."], Response::HTTP_NOT_FOUND);
+        } elseif ($user->plugs->contains($plug->id)) {
+            $plugUser = $user->plugs->find($plug->id);
+            return response(['message' => "Você já possui vínculo com esta tomada, nomeada como \"{$plugUser->pivot->name}\""], Response::HTTP_CREATED);
         }
 
-        $user->plugs()->attach($plug->id);
+        $name = $request->name ?? null;
+
+        $user->plugs()->attach([$plug->id => ['name' => $name]]);
         return response([], Response::HTTP_CREATED);
     }
 
