@@ -7,31 +7,33 @@ use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Http\Response;
 
-class SendPushNotificationScheduleEnd extends Command
+class SendPushNotificationScheduleStarted extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'push-notification:send-schedule-finished';
+    protected $signature = 'push-notification:send-schedule-started';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Envia as notificações push informando o fim de um agendamento';
+    protected $description = 'Envia as notificações push informando o início de um agendamento';
 
     /**
      * Execute the console command.
+     *
+     * @return void
      */
     public function handle(): void
     {
         $schedules = Schedule::query()
-            ->where("end_push_notification_sent", "=", false)
+            ->where("start_push_notification_sent", "=", false)
             ->where("started", "=", true)
-            ->where('end_date', "<", now())
+            ->where('start_date', "<", now())
             ->whereNull("deleted_at")
             ->get();
         if (!$schedules) {
@@ -55,13 +57,13 @@ class SendPushNotificationScheduleEnd extends Command
                 "json" => [
                     "to" => $token,
                     "sound" => "default",
-                    "title" => "Feito!!! =)",
-                    "body" => "Seu agendamento foi executado com sucesso e a tomada foi desligada!"
+                    "title" => "Começou!!!",
+                    "body" => "Seu agendamento iniciou e está em andamento!"
                 ]
             ]);
 
             if ($response->getStatusCode() === Response::HTTP_OK) {
-                $schedule->end_push_notification_sent = true;
+                $schedule->start_push_notification_sent = true;
                 $schedule->save();
             }
         }
