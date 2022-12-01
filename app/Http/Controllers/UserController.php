@@ -33,15 +33,20 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
-            /* @var User $user */
-            $user = Auth::user();
-            $token = $user->createToken("TomadaInteligenteAPI");
-
-            return response(["user" => $user, "token" => $token->plainTextToken], Response::HTTP_OK);
+        if (!Auth::attempt(["email" => $request->email, "password" => $request->password])) {
+            return response(['message' => "E-mail ou senha incorretos"], Response::HTTP_UNAUTHORIZED);
         }
 
-        return response(['message' => "E-mail ou senha incorretos"], Response::HTTP_UNAUTHORIZED);
+        /* @var User $user */
+        $user = Auth::user();
+        $token = $user->createToken("TomadaInteligenteAPI");
+
+        if (isset($request->push_token) && !empty(trim($request->push_token))) {
+            $user->push_token = $request->push_token;
+            $user->save();
+        }
+
+        return response(["user" => $user, "token" => $token->plainTextToken], Response::HTTP_OK);
     }
 
     public function show(Request $request)
@@ -150,7 +155,8 @@ class UserController extends Controller
         return response($schedules, Response::HTTP_OK);
     }
 
-    function removeSchedule(Schedule $schedule) {
+    function removeSchedule(Schedule $schedule)
+    {
         /* @var User $user */
         $user = Auth::user();
         $userSchedule = $schedule->user();
