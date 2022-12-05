@@ -30,6 +30,22 @@ class PlugController extends Controller
         return response(["plug" => $plug], Response::HTTP_CREATED);
     }
 
+
+    public function update(Request $request)
+    {
+        /* @var Plug $plug */
+        $plug = Plug::query()
+                //->findOrFail($request->serial_number)->update($request->power);
+                ->where('serial_number', $request->serial_number)
+                ->update(['power' => $request->power]);
+        if (is_null($plug)) {
+            return response(['message' => "Erro ao registrar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        //return response($request->power);
+        return response(["plug" => $plug], Response::HTTP_CREATED);
+    }
+
     public function findBySerialNumber(Request $request)
     {
         /* @var Plug $plug */
@@ -144,7 +160,51 @@ class PlugController extends Controller
             return response([], Response::HTTP_NO_CONTENT);
         }
 
-        return response(['schedule' => $schedule], Response::HTTP_OK);
+        //return response(['schedule' => $schedule], Response::HTTP_OK);
+        return response($schedule, Response::HTTP_OK);
+    }
+
+    public function checkCanceledSchedule(Plug $plug, Request $request)
+    {
+        $scheduleId = $request->input('schedule');
+
+        if (intval($scheduleId) <= 0) {
+            return response(['message' => "Erro ao identificar o agendamento a ser cancelado"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        /* @var Schedule $schedule */
+        $schedule = Schedule::query()->where('id', $scheduleId)->withTrashed()->first();
+        if (!$schedule) {
+            return response(['message' => "Agendamento não encontrado"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        if ($schedule->deleted_at != null){
+            return response(true, Response::HTTP_OK);
+        }
+
+        return response([], Response::HTTP_OK);
+    }
+
+    public function cancelCurrentSchedule(Plug $plug, Request $request)
+    {
+        $scheduleId = $request->input('schedule');
+        if (intval($scheduleId) <= 0) {
+            return response(['message' => "Erro ao identificar o agendamento a ser cancelado"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        /* @var Schedule $schedule */
+        $schedule = Schedule::find(intval($scheduleId));
+        if (!$schedule) {
+            return response(['message' => "Agendamento não encontrado"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        $schedulePlug = $schedule->plug();
+        if ($schedulePlug->id !== $plug->id) {
+            return response(['message' => "Agendamento e tomada não estão vinculados"], Response::HTTP_BAD_GATEWAY);
+        }
+
+        $schedule->cancel();
+        return response([], Response::HTTP_OK);
     }
 
     public function startSchedule(Plug $plug, Request $request)

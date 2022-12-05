@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -53,6 +54,14 @@ class Schedule extends Model
 
         $this->started = true;
         $this->save();
+    }
+
+    public function cancel()
+    {
+        if ($this->isStarted()) {
+            $this->deleted_at = Carbon::now();
+            $this->save();
+        }
     }
 
     public function isStarted()

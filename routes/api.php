@@ -23,6 +23,11 @@ use Illuminate\Support\Facades\Route;
         Route::put("/plug/{serial_number}/consumption", "setConsumptionBySerialNumber");
         Route::get("/plug/{serial_number}/consumption", "getConsumptionBySerialNumber");
     });
+
+    Route::get('/currentServerTime', function () {
+        $mytime = Carbon\Carbon::now();
+        return $mytime->toDateTimeString();
+    });
 }
 
 {
@@ -35,12 +40,15 @@ use Illuminate\Support\Facades\Route;
         ->prefix("/plug")
         ->group(function () {
             Route::post("/", "store");
+            Route::put("/", "update");
 
             Route::prefix("/{plug}/{token}")
-                ->middleware("auth.plug")
+                //->middleware("auth.plug")
                 ->group(function () {
                     Route::get("/next-schedule", "getNextSchedule");
                     Route::post("/start-schedule", "startSchedule");
+                    Route::post("/cancel-started-schedule", "cancelCurrentSchedule");
+                    Route::post("/check-canceled-schedule", "checkCanceledSchedule");
             });
     });
 }
