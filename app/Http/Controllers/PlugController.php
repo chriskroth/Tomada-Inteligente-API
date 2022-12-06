@@ -33,16 +33,21 @@ class PlugController extends Controller
 
     public function update(Request $request)
     {
-        /* @var Plug $plug */
-        $plug = Plug::query()
-                //->findOrFail($request->serial_number)->update($request->power);
-                ->where('serial_number', $request->serial_number)
-                ->update(['power' => $request->power]);
+        $plugQuery = Plug::query();
+        if (!empty($request->serial_number)) {
+            $plugQuery->where("serial_number", "=", $request->serial_number);
+        } elseif (!empty($request->id)) {
+            $plugQuery->where("id", "=", $request->id);
+        }
+        $plug = $plugQuery->first();
+
         if (is_null($plug)) {
-            return response(['message' => "Erro ao registrar os dados da Tomada"], Response::HTTP_BAD_GATEWAY);
+            return response(['message' => "Erro ao buscar os dados da sua tomada"], Response::HTTP_BAD_GATEWAY);
         }
 
-        //return response($request->power);
+        $plug->power = $request->power;
+        $plug->save();
+
         return response(["plug" => $plug], Response::HTTP_CREATED);
     }
 
@@ -176,7 +181,7 @@ class PlugController extends Controller
             return response(['message' => "Agendamento não encontrado"], Response::HTTP_BAD_GATEWAY);
         }
 
-        if ($schedule->deleted_at != null){
+        if ($schedule->deleted_at != null) {
             return response(true, Response::HTTP_OK);
         }
 
