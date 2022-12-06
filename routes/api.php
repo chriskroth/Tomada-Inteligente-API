@@ -59,6 +59,7 @@ use Illuminate\Support\Facades\Route;
             Route::get("/user", "show");
             Route::get("/user/plugs", "listPlugs");
             Route::get("/user/schedules", "listSchedules");
+            Route::get("/user/schedules/today", "listSchedulesOfDay");
             Route::post("/user/attach-plug/{serial_number}", "attachPlugToLoggedUser");
             Route::delete("/user/detach-plug/{plug}", "detachPlugFromLoggedUser");
             Route::delete("/schedule/remove/{schedule}", "removeSchedule");

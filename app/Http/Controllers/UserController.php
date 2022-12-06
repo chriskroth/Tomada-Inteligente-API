@@ -155,6 +155,36 @@ class UserController extends Controller
         return response($schedules, Response::HTTP_OK);
     }
 
+    function listSchedulesOfDay() {
+        /* @var User $user */
+        $user = Auth::user();
+
+        $schedules = Schedule::query()
+            ->join("plug_user", "schedules.plug_user_id", "=", "plug_user.id")
+            ->join("plugs", "plugs.id", "=", "plug_user.plug_id")
+            ->join("users", "users.id", "=", "plug_user.user_id")
+            ->where("plug_user.user_id", $user->id)
+            ->where("schedules.end_date", ">", now())
+            ->whereDate("schedules.start_date", "=", date("Y-m-d"))
+            ->whereNull("plug_user.deleted_at")
+            ->whereNull("schedules.deleted_at")
+            ->select(
+                DB::raw(
+                    "schedules.id, schedules.time, schedules.emit_sound, schedules.start_date, schedules.end_date, " .
+                    "schedules.voltage, schedules.started, " .
+                    "plug_user.name AS plugName, " .
+                    "users.id AS userId, users.name AS userName"
+                )
+            )
+            ->orderBy("schedules.start_date", "ASC")
+            ->get();
+        if (is_null($schedules) || count($schedules) === 0) {
+            return response([], Response::HTTP_NO_CONTENT);
+        }
+
+        return response($schedules, Response::HTTP_OK);
+    }
+
     function removeSchedule(Schedule $schedule)
     {
         /* @var User $user */
@@ -164,10 +194,6 @@ class UserController extends Controller
         if ($user->id != $userSchedule->id) {
             return response(['message' => "Você não possui permissão para remover este agendamento"], Response::HTTP_UNAUTHORIZED);
         }
-
-//        if ($schedule->started == 1) {
-//            return response(['message' => "A função de remover agendamentos em andamento ainda não está disponível"], Response::HTTP_UNAUTHORIZED);
-//        }
 
         if ($schedule->delete())
             return response([], Response::HTTP_OK);
