@@ -47,7 +47,6 @@ use Illuminate\Support\Facades\Route;
                 ->group(function () {
                     Route::get("/next-schedule", "getNextSchedule");
                     Route::post("/start-schedule", "startSchedule");
-                    Route::post("/cancel-started-schedule", "cancelCurrentSchedule");
                     Route::post("/check-canceled-schedule", "checkCanceledSchedule");
             });
     });
