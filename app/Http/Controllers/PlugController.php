@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class PlugController extends Controller
@@ -148,6 +149,28 @@ class PlugController extends Controller
 
     public function getNextSchedule(Plug $plug)
     {
+        DB::enableQueryLog();
+        $schedule = Schedule::query()
+            ->join("plug_user", "plug_user.id", "=", "schedules.plug_user_id")
+            ->where("plug_user.plug_id", $plug->id)
+            ->where("schedules.started", false)
+            ->where("schedules.start_date", ">", DB::raw("DATE_SUB(NOW(), INTERVAL " . env("SCHEDULE_SEGUNDOS_TOLERANCIA") . " SECOND)"))
+            ->orderBy("start_date")
+            ->select("schedules.*")
+            ->first();
+        Log::debug(print_r(DB::getQueryLog(), true));
+        DB::disableQueryLog();
+
+        if (!$schedule) {
+            return response([], Response::HTTP_NO_CONTENT);
+        }
+
+        //return response(['schedule' => $schedule], Response::HTTP_OK);
+        return response($schedule, Response::HTTP_OK);
+    }
+/*
+    public function getNextSchedule(Plug $plug)
+    {
         $schedule = Schedule::query()
             ->join("plug_user", "plug_user.id", "=", "schedules.plug_user_id")
             ->where("plug_user.plug_id", $plug->id)
@@ -163,7 +186,7 @@ class PlugController extends Controller
         //return response(['schedule' => $schedule], Response::HTTP_OK);
         return response($schedule, Response::HTTP_OK);
     }
-
+*/
     public function checkCanceledSchedule(Plug $plug, Request $request)
     {
         $scheduleId = $request->input('schedule');

@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Route;
             Route::put("/", "update");
 
             Route::prefix("/{plug}/{token}")
-                //->middleware("auth.plug")
+                ->middleware("auth.plug")
                 ->group(function () {
                     Route::get("/next-schedule", "getNextSchedule");
                     Route::post("/start-schedule", "startSchedule");
