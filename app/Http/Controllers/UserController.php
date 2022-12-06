@@ -165,9 +165,9 @@ class UserController extends Controller
             return response(['message' => "Você não possui permissão para remover este agendamento"], Response::HTTP_UNAUTHORIZED);
         }
 
-        if ($schedule->started == 1) {
-            return response(['message' => "A função de remover agendamentos em andamento ainda não está disponível"], Response::HTTP_UNAUTHORIZED);
-        }
+//        if ($schedule->started == 1) {
+//            return response(['message' => "A função de remover agendamentos em andamento ainda não está disponível"], Response::HTTP_UNAUTHORIZED);
+//        }
 
         if ($schedule->delete())
             return response([], Response::HTTP_OK);
