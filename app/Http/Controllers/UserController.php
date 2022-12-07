@@ -129,7 +129,7 @@ class UserController extends Controller
     {
         /* @var User $user */
         $user = Auth::user();
-        $plugs = $user->plugs();
+        $plugs = $user->plugs;
         $plugsIds = [];
         if ($plugs) {
             foreach ($plugs as $plug) {
