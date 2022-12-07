@@ -25,7 +25,7 @@ class PlugUpdateRequest extends FormRequest
     {
         return [
             "power" => "filled|numeric|min:0|max:100",
-            "consumption" => "filled|numeric|min:0|max:20",
+            "consumption" => "filled|numeric|min:0",
         ];
     }
 }
