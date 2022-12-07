@@ -129,12 +129,19 @@ class UserController extends Controller
     {
         /* @var User $user */
         $user = Auth::user();
+        $plugs = $user->plugs();
+        $plugsIds = [];
+        if ($plugs) {
+            foreach ($plugs as $plug) {
+                $plugsIds[] = $plug->id;
+            }
+        }
 
         $schedules = Schedule::query()
             ->join("plug_user", "schedules.plug_user_id", "=", "plug_user.id")
             ->join("plugs", "plugs.id", "=", "plug_user.plug_id")
             ->join("users", "users.id", "=", "plug_user.user_id")
-            ->where("plug_user.user_id", $user->id)
+            ->whereIn("plug_user.plug_id", $plugsIds)
             ->where("schedules.end_date", ">", now())
             ->whereNull("plug_user.deleted_at")
             ->whereNull("schedules.deleted_at")
